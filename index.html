@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Reddi Services — Daily JSA</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f3f4f6;color:#111827}
+main{max-width:760px;margin:auto;padding:16px 14px 40px}.card{background:white;border-radius:16px;padding:18px;margin:12px 0;box-shadow:0 1px 5px #0001}
+h1{font-size:24px;margin:4px 0}.sub{color:#6b7280;font-size:14px}.section{font-size:18px;margin:0 0 12px}label{display:block;font-weight:600;margin:12px 0 6px}
+input,textarea{width:100%;font:inherit;border:1px solid #d1d5db;border-radius:10px;padding:12px;background:#fff}textarea{min-height:90px;resize:vertical}
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #eee;font-weight:500}.check:last-child{border:0}
+.check input{width:24px;height:24px;flex:0 0 24px;margin:0}.crew{display:grid;grid-template-columns:1fr;gap:8px}
+button{border:0;border-radius:10px;padding:13px 15px;font-weight:700;font-size:16px;margin:5px 4px 0 0}#new{background:#dc2626;color:white}#print{background:#111827;color:white}.saved{font-size:13px;color:#047857;margin-top:10px}
+@media(min-width:600px){.crew{grid-template-columns:1fr 1fr 1fr}}
+@media print{button,.saved{display:none}body{background:#fff}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
+</style>
+</head>
+<body><main>
+<div class="card">
+<h1>Reddi Services — Daily JSA</h1><div class="sub">Daily Job Safety Analysis & Tailgate Safety Meeting</div>
+<label>Date</label><input id="date" type="date">
+<label>Job / Customer</label><input id="job" placeholder="Customer or job name">
+<label>Work Order #</label><input id="wo" placeholder="Work order number">
+</div>
+<div class="card"><h2 class="section">Crew (3)</h2><div class="crew"><input id="crew1" placeholder="Crew member 1"><input id="crew2" placeholder="Crew member 2"><input id="crew3" placeholder="Crew member 3"></div></div>
+<div class="card"><h2 class="section">Equipment — before leaving shop</h2>
+<label class="check"><input type="checkbox" id="e0"><span>Dry vac checked</span></label><label class="check"><input type="checkbox" id="e1"><span>Support truck checked</span></label><label class="check"><input type="checkbox" id="e2"><span>Harben jetter trailer checked</span></label><label class="check"><input type="checkbox" id="e3"><span>Hoses / nozzles / tools checked</span></label><label class="check"><input type="checkbox" id="e4"><span>Fuel / fluids checked</span></label><label class="check"><input type="checkbox" id="e5"><span>PPE checked</span></label><label class="check"><input type="checkbox" id="e6"><span>First-aid kit present</span></label><label class="check"><input type="checkbox" id="e7"><span>Fire extinguisher present</span></label>
+</div>
+<div class="card"><h2 class="section">Safety / JSA</h2>
+<label class="check"><input type="checkbox" id="s0"><span>JSA reviewed with all crew</span></label><label class="check"><input type="checkbox" id="s1"><span>Jobsite hazards identified</span></label><label class="check"><input type="checkbox" id="s2"><span>Traffic / work-zone hazards addressed</span></label><label class="check"><input type="checkbox" id="s3"><span>Utilities / underground hazards considered</span></label><label class="check"><input type="checkbox" id="s4"><span>Emergency plan reviewed</span></label><label class="check"><input type="checkbox" id="s5"><span>Weather / environmental conditions considered</span></label>
+<label>Hazards identified</label><textarea id="hazards" placeholder="List hazards, controls, PPE, traffic concerns, utilities, etc."></textarea>
+<label>Corrective actions / notes</label><textarea id="actions" placeholder="What was corrected or what needs follow-up?"></textarea>
+</div>
+<div class="card"><h2 class="section">Crew sign-off</h2>
+<label class="check"><input type="checkbox" id="sign0"><span>Crew member 1 reviewed JSA</span></label><label class="check"><input type="checkbox" id="sign1"><span>Crew member 2 reviewed JSA</span></label><label class="check"><input type="checkbox" id="sign2"><span>Crew member 3 reviewed JSA</span></label>
+<button id="new" type="button">New Daily Checklist</button><button id="print" type="button">Print / Save PDF</button><div class="saved" id="saved">Auto-save is on — your entries stay on this device.</div>
+</div>
+<div class="sub">Field aid only. Follow Reddi Services policies and applicable safety requirements.</div>
+</main>
+<script>
+const ids=[...document.querySelectorAll("input,textarea")].map(x=>x.id).filter(Boolean);
+const key="reddi-jsa-"+new Date().toISOString().slice(0,10);
+function save(){const d={};ids.forEach(id=>{const x=document.getElementById(id);d[id]=x.type==="checkbox"?x.checked:x.value});localStorage.setItem(key,JSON.stringify(d));document.getElementById("saved").textContent="Saved automatically • "+new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});}
+function load(){const d=JSON.parse(localStorage.getItem(key)||"{}");ids.forEach(id=>{const x=document.getElementById(id);if(d[id]!==undefined){if(x.type==="checkbox")x.checked=d[id];else x.value=d[id]}});if(!document.getElementById("date").value)document.getElementById("date").value=new Date().toISOString().slice(0,10);}
+ids.forEach(id=>document.getElementById(id).addEventListener("input",save));ids.filter(id=>document.getElementById(id).type==="checkbox").forEach(id=>document.getElementById(id).addEventListener("change",save));
+document.getElementById("print").onclick=()=>window.print();
+document.getElementById("new").onclick=()=>{if(confirm("Start a new daily checklist? Today's saved checklist will remain in this browser.")){localStorage.removeItem(key);location.reload()}};
+load();
+</script></body></html>
